@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import mountains from './assets/mountains.png';
 import dude from './assets/dude.png';
 import wood from './assets/wood.png';
+import pearl from './assets/pearl.png';
 
 const config = {
   type: Phaser.AUTO,
@@ -35,7 +36,6 @@ function preload() {
 }
 
 function create() {
-  // background = this.add.image(0, 0, 'mountains');
   let windowWidth = window.innerWidth;
   let windowHeight = window.innerHeight;
 
@@ -52,13 +52,10 @@ function create() {
 
   // create ground & scale to fit the width of the game
   platform = this.physics.add.staticGroup();
-  platform.create(0, 490, 'wood').setScale(0.5).refreshBody();
-  platform.create(155, 490, 'wood').setScale(0.5).refreshBody();
-  platform.create(300, 490, 'wood').setScale(0.5).refreshBody();
-  platform.create(450, 490, 'wood').setScale(0.5).refreshBody();
-  platform.create(600, 490, 'wood').setScale(0.5).refreshBody();
-  platform.create(750, 490, 'wood').setScale(0.5).refreshBody();
 
+  for (let i = 0; i < 6; i++) {
+    platform.create((i * 150), 490, 'wood').setScale(0.5).refreshBody();
+  }
 
   player = this.physics.add.sprite(100, 400, 'dude');
   player.body.setGravityY(300);
@@ -79,19 +76,17 @@ function create() {
     key: 'stand',
     frames: [{ key: 'dude', frame: 4 }],
     frameRate: 20,
-  });
+  })
 }
 
 function update() {
-
   // input cursor events
+  let onGround = player.body.blocked.down || player.body.touching.down;
   cursors = this.input.keyboard.createCursorKeys();
-  if (cursors.right.isDown) {
-    player.anims.play('run', true);
-    this.mountains.tilePositionX += 4;
-  } else {
-    player.setVelocityX(0);
-    player.anims.play('stand');
+  player.anims.play('run', true);
+  this.mountains.tilePositionX += 4;
+  if (cursors.up.isDown && onGround) {
+    player.body.setVelocityY(-400);
   }
 }
 
