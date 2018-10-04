@@ -4,38 +4,19 @@ import dude from './assets/dude.png';
 import wood from './assets/wood.png';
 import pearl from './assets/pearl.png';
 
-const config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 500,
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 300 },
-      debug: false,
-    },
-  },
-  scene: {
-    key: 'main',
-    preload: preload,
-    create: create,
-    update: update
-  },
-};
-
-let game = new Phaser.Game(config);
-
 let player;
 let cursors;
 let platform;
 
-function preload() {
+let gameScene = new Phaser.Scene('Game');
+
+gameScene.preload = function() {
   this.load.image('mountains', mountains);
   this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
   this.load.image('wood', wood);
-}
+};
 
-function create() {
+gameScene.create = function() {
   let windowWidth = window.innerWidth;
   let windowHeight = window.innerHeight;
 
@@ -77,9 +58,9 @@ function create() {
     frames: [{ key: 'dude', frame: 4 }],
     frameRate: 20,
   })
-}
+};
 
-function update() {
+gameScene.update = function() {
   // input cursor events
   let onGround = player.body.blocked.down || player.body.touching.down;
   cursors = this.input.keyboard.createCursorKeys();
@@ -88,7 +69,23 @@ function update() {
   if (cursors.up.isDown && onGround) {
     player.body.setVelocityY(-400);
   }
-}
+};
+
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 500,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y: 300 },
+      debug: false,
+    },
+  },
+  scene: gameScene,
+};
+
+let game = new Phaser.Game(config);
 
 // if (module.hot) {
 //   module.hot.accept(() => {});
