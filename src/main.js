@@ -19,6 +19,8 @@ import jump3 from './assets/islandBoyJump/3.png';
 import jump4 from './assets/islandBoyJump/4.png';
 import jump5 from './assets/islandBoyJump/5.png';
 import jump6 from './assets/islandBoyJump/6.png';
+import pearl from './assets/pearl.png';
+import stone3 from './assets/Stone_3.png';
 
 let player;
 let cursors;
@@ -29,6 +31,8 @@ let gameScene = new Phaser.Scene('Game');
 gameScene.preload = function() {
   this.load.image('mountains', mountains);
   this.load.image('wood', wood);
+  this.load.image('stone3', stone3);
+  this.load.image('pearl', pearl);
 };
 
 gameScene.create = function() {
@@ -46,8 +50,12 @@ gameScene.create = function() {
   this.mountains = this.add.tileSprite(400, 210, imageBaseWidth, imageBaseHeight, 'mountains');
   this.mountains.setScale(0.5);
 
+  // this.stone3 = this.add.sprite(500, 470, 'stone3');
+  this.pearl = this.add.sprite(400, 320, 'pearl');
+
   // create ground & scale to fit the width of the game
   platform = this.physics.add.staticGroup();
+  this.stones = this.physics.add.group();
 
   for (let i = 0; i < 6; i++) {
     platform.create((i * 150), 490, 'wood').setScale(0.5).refreshBody();
@@ -86,21 +94,49 @@ gameScene.create = function() {
   player.setCollideWorldBounds(true);
 
   this.physics.add.collider(player, platform);
+  this.physics.add.collider(this.stones, platform);
+  this.physics.add.collider(player, this.stones);
+  // this.physics.add.overlap(player, pearl, collectPearl, null, this);
 
+  this.time.addEvent({
+    callback: this.generateStone3,
+    callbackScope: this,
+    repeat: Infinity,
+    // delay: 1000
+    delay: 4000,
+  });
+
+  player.anims.play('run', true);
+};
+
+// gameScene.collectPearl = function() {
+// pearl.disableBody(true, true);
+// };
+
+gameScene.generateStone3 = function() {
+  this.stones.create(800, platform.children.entries[0].y - 30, 'stone3');
 };
 
 gameScene.update = function() {
   // input cursor events
   let onGround = player.body.blocked.down || player.body.touching.down;
   cursors = this.input.keyboard.createCursorKeys();
-
-  player.anims.play('run', true);
+  if (onGround) {
+    player.anims.play('run', true);
+  }
   this.mountains.tilePositionX += 4;
+  this.pearl.x -= 4;
 
   if ((cursors.up.isDown || cursors.space.isDown) && onGround) {
     player.body.setVelocityY(-400);
-    player.anims.play('jump', true);
+    player.anims.stop('run');
+    player.anims.play('jump');
+    // player.setFrame(5);
   }
+
+  this.stones.getChildren().forEach((stone) => {
+    stone.x -= 4;
+  })
 };
 
 let welcomeScene = new Phaser.Scene('Welcome');
@@ -209,11 +245,3 @@ const config = {
 };
 
 let game = new Phaser.Game(config);
-
-// if (module.hot) {
-//   module.hot.accept(() => {});
-
-//   module.hot.dispose(() => {
-//     window.location.reload();
-//   });
-// }
