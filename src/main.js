@@ -21,6 +21,7 @@ import jump5 from './assets/islandBoyJump/5.png';
 import jump6 from './assets/islandBoyJump/6.png';
 import pearl from './assets/pearl.png';
 import stone3 from './assets/Stone_3.png';
+import runningAudio from './assets/island-runner-music.mp3';
 
 let player;
 let cursors;
@@ -33,9 +34,13 @@ gameScene.preload = function() {
   this.load.image('wood', wood);
   this.load.image('stone3', stone3);
   this.load.image('pearl', pearl);
+  // this.load.image('coin', coin);
 };
 
 gameScene.create = function() {
+  let themeSound = this.sound.add('runningAudio');
+  themeSound.play({ loop: true });
+
   let windowWidth = window.innerWidth;
   let windowHeight = window.innerHeight;
 
@@ -84,11 +89,11 @@ gameScene.create = function() {
       { key: 'jump5' },
       { key: 'jump6', duration: 100 },
     ],
-    frameRate: 15,
+    frameRate: 7,
     repeat: -1,
   });
 
-  player = this.physics.add.sprite(150, 400, 'run1').setScale(0.1);
+  player = this.physics.add.sprite(150, 400, 'run1').setScale(0.08);
   player.setBounce(0.2);
   player.body.setGravityY(300);
   player.setCollideWorldBounds(true);
@@ -160,6 +165,7 @@ welcomeScene.preload = function() {
   this.load.image('jump4', jump4);
   this.load.image('jump5', jump5);
   this.load.image('jump6', jump6);
+  this.load.audio('runningAudio', runningAudio);
 },
 
 welcomeScene.create = function() {
@@ -230,6 +236,9 @@ rulesScene.create = function() {
   okButton.on('pointerdown', () => this.scene.start(welcomeScene));
 };
 
+// MAIN FILE (can stay in this file but import the scenes)
+
+// Creates the configurations for the game including all of the scenes
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -244,4 +253,5 @@ const config = {
   scene: [welcomeScene, gameScene, rulesScene],
 };
 
+// Create a new Phaser game with the configurations mentioned above
 let game = new Phaser.Game(config);
