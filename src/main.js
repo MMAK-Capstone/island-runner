@@ -26,6 +26,8 @@ import runningAudio from './assets/island-runner-music.mp3';
 let player;
 let cursors;
 let platform;
+let score = 0;
+let scoreText;
 let themeSound;
 
 let gameScene = new Phaser.Scene('Game');
@@ -57,11 +59,15 @@ gameScene.create = function() {
   this.mountains.setScale(0.5);
 
   // this.stone3 = this.add.sprite(500, 470, 'stone3');
-  this.pearl = this.add.sprite(400, 320, 'pearl');
+  // this.pearl = this.add.sprite(400, 320, 'pearl');
+  this.pearl = this.physics.add.sprite(400, 320, 'pearl');
+  this.pearl.body.setAllowGravity(false);
 
   // create ground & scale to fit the width of the game
   platform = this.physics.add.staticGroup();
   this.stones = this.physics.add.group();
+
+  scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
   for (let i = 0; i < 6; i++) {
     platform.create((i * 150), 490, 'wood').setScale(0.5).refreshBody();
@@ -102,6 +108,8 @@ gameScene.create = function() {
   this.physics.add.collider(player, platform);
   this.physics.add.collider(this.stones, platform);
   this.physics.add.collider(player, this.stones);
+
+  this.physics.add.overlap(player, this.pearl, this.collectPearl, null, this);
   this.physics.add.overlap(player, this.stones, this.restartGame, null, this);
 
   this.time.addEvent({
@@ -118,6 +126,13 @@ gameScene.create = function() {
 // gameScene.collectPearl = function() {
 // pearl.disableBody(true, true);
 // };
+
+gameScene.collectPearl = function(player, pearl) {
+  console.log('in collect');
+  pearl.disableBody(true, true);
+  score += 50;
+  scoreText.setText('Score: ' + score);
+};
 
 gameScene.generateStone3 = function() {
   this.stones.create(800, platform.children.entries[0].y - 30, 'stone3');
@@ -148,6 +163,7 @@ gameScene.update = function() {
 gameScene.restartGame = function() {
   themeSound.stop();
   this.scene.restart();
+  score = 0;
 };
 
 let welcomeScene = new Phaser.Scene('Welcome');
