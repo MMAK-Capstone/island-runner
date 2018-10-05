@@ -212,7 +212,7 @@ rulesScene.preload = function() {
   this.load.image('welcome', welcome);
   this.load.image('ok', ok);
   this.load.image('rulesList', rulesList);
-},
+};
 
 rulesScene.create = function() {
   let windowWidth = window.innerWidth;
