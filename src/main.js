@@ -26,6 +26,7 @@ import runningAudio from './assets/island-runner-music.mp3';
 let player;
 let cursors;
 let platform;
+let themeSound;
 
 let gameScene = new Phaser.Scene('Game');
 
@@ -38,7 +39,7 @@ gameScene.preload = function() {
 };
 
 gameScene.create = function() {
-  let themeSound = this.sound.add('runningAudio');
+  themeSound = this.sound.add('runningAudio');
   themeSound.play({ loop: true });
 
   let windowWidth = window.innerWidth;
@@ -101,7 +102,7 @@ gameScene.create = function() {
   this.physics.add.collider(player, platform);
   this.physics.add.collider(this.stones, platform);
   this.physics.add.collider(player, this.stones);
-  // this.physics.add.overlap(player, pearl, collectPearl, null, this);
+  this.physics.add.overlap(player, this.stones, this.restartGame, null, this);
 
   this.time.addEvent({
     callback: this.generateStone3,
@@ -142,6 +143,11 @@ gameScene.update = function() {
   this.stones.getChildren().forEach((stone) => {
     stone.x -= 4;
   })
+};
+
+gameScene.restartGame = function() {
+  themeSound.stop();
+  this.scene.restart();
 };
 
 let welcomeScene = new Phaser.Scene('Welcome');
