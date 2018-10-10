@@ -360,7 +360,7 @@ rulesScene.create = function () {
 
   this.add.sprite(170, 400, 'welcomeSprite').setScale(0.3);
   this.add.image(540, 245, 'rulesList').setScale(0.3);
-  const okButton = this.add.sprite(535, 350, 'ok').setScale(0.24).setInteractive({ useHandCursor: true });
+  const okButton = this.add.sprite(535, 340, 'ok').setScale(0.22).setInteractive({ useHandCursor: true });
   okButton.on('pointerdown', () => this.scene.start(welcomeScene));
 };
 
