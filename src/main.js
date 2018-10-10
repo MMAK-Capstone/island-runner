@@ -1,39 +1,53 @@
 import Phaser from 'phaser';
+
 import mountains from './assets/mountains.png';
 import wood from './assets/wood.png';
+
 import welcomeSprite from './assets/welcomeSprite.png';
 import welcome from './assets/welcome.png';
 import play from './assets/play.png';
 import rules from './assets/faq.png';
 import ok from './assets/ok.png';
 import rulesList from './assets/rulesList.png';
+
 import run1 from './assets/islandBoyRun/1.png';
 import run2 from './assets/islandBoyRun/2.png';
 import run3 from './assets/islandBoyRun/3.png';
 import run4 from './assets/islandBoyRun/4.png';
 import run5 from './assets/islandBoyRun/5.png';
 import run6 from './assets/islandBoyRun/6.png';
+
 import jump1 from './assets/islandBoyJump/1.png';
 import jump2 from './assets/islandBoyJump/2.png';
 import jump3 from './assets/islandBoyJump/3.png';
 import jump4 from './assets/islandBoyJump/4.png';
 import jump5 from './assets/islandBoyJump/5.png';
 import jump6 from './assets/islandBoyJump/6.png';
+
 import pearl from './assets/pearl.png';
 import stone3 from './assets/Stone_3.png';
+
 import runningAudio from './assets/island-runner-music.mp3';
+
 import bar from './assets/bar.png';
 import loading from './assets/loading.png';
+
 import youLose from './assets/youLose.png';
 import lostGameAudio from './assets/lostGame.mp3';
+
 import faint1 from './assets/islandBoyFaint/1.png';
 import faint2 from './assets/islandBoyFaint/2.png';
 import faint3 from './assets/islandBoyFaint/3.png';
 import faint4 from './assets/islandBoyFaint/4.png';
+
 import slide1 from './assets/islandBoySlide/1.png';
 import slide2 from './assets/islandBoySlide/2.png';
 import slide3 from './assets/islandBoySlide/3.png';
+
 import coin from './assets/coin.png';
+import close from './assets/close.png';
+import bomb from './assets/bomb.png';
+
 
 let player;
 let cursors;
@@ -66,13 +80,14 @@ gameScene.create = function() {
 
   // this.stone3 = this.add.sprite(500, 470, 'stone3');
   // this.pearl = this.add.sprite(400, 320, 'pearl');
-  this.pearl = this.physics.add.sprite(400, 320, 'pearl');
-  this.pearl.body.setAllowGravity(false);
+  // this.pearl = this.physics.add.sprite(400, 320, 'pearl');
+  // this.pearl.body.setAllowGravity(false);
 
   // create ground & scale to fit the width of the game
   platform = this.physics.add.staticGroup();
   this.stones = this.physics.add.group();
   this.coins = this.physics.add.group();
+  // this.pearl = this.physics.add.group();
 
   scoreText = this.add.text(16, 16, 'Score: 0', { fontFamily: 'Chewy', fontSize: '32px', fill: '#000' });
 
@@ -93,6 +108,7 @@ gameScene.create = function() {
     frameRate: 7,
     // repeat: -1,
   });
+
   this.anims.create({
     key: 'jump',
     frames: [
@@ -137,19 +153,18 @@ gameScene.create = function() {
 
   this.physics.add.collider(player, platform);
   this.physics.add.collider(this.stones, platform);
-  this.physics.add.collider(player, this.stones);
   this.physics.add.collider(this.coins, platform);
-  this.physics.add.collider(player, this.coins);
 
   this.physics.add.overlap(player, this.pearl, this.collectPearl, null, this);
   this.physics.add.overlap(player, this.stones, this.restartGame, null, this);
   this.physics.add.overlap(player, this.coins, this.collectCoins, null, this);
 
+  this.makePearl();
+
   this.time.addEvent({
     callback: this.generateStone3,
     callbackScope: this,
     repeat: Infinity,
-    // delay: 1000
     delay: 3000,
   });
 
@@ -157,26 +172,21 @@ gameScene.create = function() {
     callback: this.generateCoins,
     callbackScope: this,
     repeat: Infinity,
-    delay: 1000,
+    delay: 1234,
   })
 
   player.anims.play('run', true);
 };
 
-// gameScene.collectPearl = function() {
-// pearl.disableBody(true, true);
-// };
-
-gameScene.collectPearl = function(player, pearl) {
-  console.log('in collect');
-  pearl.disableBody(true, true);
+gameScene.collectPearl = function (player, pearls) {
+  pearls.disableBody(true, true);
   score += 50;
   scoreText.setText('Score: ' + score);
 };
 
-gameScene.collectCoins = function(player, coin) {
-  coin.disableBody(true, true);
-  score +=5;
+gameScene.collectCoins = function (player, coins) {
+  coins.disableBody(true, true);
+  score += 5;
   scoreText.setText('Score: ' + score);
 };
 
@@ -188,6 +198,18 @@ gameScene.generateStone3 = function () {
   this.stones.create(800, platform.children.entries[0].y - 30, 'stone3');
 };
 
+gameScene.makePearl = function () {
+  if (this.pearl) {
+    this.pearl.destroy();
+  }
+
+  var pearlX = Phaser.Math.Between(900, 10000);
+  var pearlY = Phaser.Math.Between(200, 400);
+  this.pearl = this.physics.add.sprite(pearlX, pearlY, 'pearl');
+  this.pearl.body.setAllowGravity(false);
+  // this.pearl.x -= 10;
+};
+
 gameScene.update = function() {
   // input cursor events
   let onGround = player.body.blocked.down || player.body.touching.down;
@@ -196,7 +218,7 @@ gameScene.update = function() {
     player.anims.play('run', true);
   }
   this.mountains.tilePositionX += 4;
-  this.pearl.x -= 4;
+  this.pearl.x -= 10;
 
   if ((cursors.up.isDown || cursors.space.isDown) && onGround) {
     player.body.setVelocityY(-400);
@@ -214,11 +236,17 @@ gameScene.update = function() {
 
   this.stones.getChildren().forEach((stone) => {
     stone.x -= 4;
-  })
+  });
 
   this.coins.getChildren().forEach((coin) => {
     coin.x -= 4;
-  })
+  });
+
+  this.physics.add.overlap(player, this.pearl, this.collectPearl, null, this);
+
+  if (this.pearl.x < 0) {
+    this.makePearl();
+  }
 };
 
 gameScene.restartGame = function() {
@@ -331,7 +359,6 @@ loadingScene.preload = function () {
   this.load.audio('runningAudio', runningAudio);
   this.load.image('stone3', stone3);
   this.load.image('pearl', pearl);
-  // this.load.image('coin', coin);
   this.load.image('youLose', youLose);
   this.load.audio('lostGameAudio', lostGameAudio);
   this.load.image('faint1', faint1);
