@@ -47,6 +47,8 @@ import slide3 from './assets/islandBoySlide/3.png';
 import coin from './assets/coin.png';
 import close from './assets/close.png';
 import bomb from './assets/bomb.png';
+import musicOff from './assets/music-off.png';
+import music from './assets/music.png';
 
 
 let player;
@@ -58,22 +60,14 @@ let themeSound;
 let finalScore;
 let lostSound;
 
-let gameScene = new Phaser.Scene('Game');
+const gameScene = new Phaser.Scene('Game');
 
-gameScene.create = function() {
+gameScene.create = function () {
   themeSound = this.sound.add('runningAudio');
   themeSound.play({ loop: true });
 
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
-
-  let topBackgroundXOrigin = windowWidth / 2;
-  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
-  let topBackgroundHeight = (windowHeight / 5) * 3;
-
-  let imageBaseWidth = 1920;
-  let imageBaseHeight = 1080;
-  let heightRatio = topBackgroundHeight / imageBaseHeight;
+  const imageBaseWidth = 1920;
+  const imageBaseHeight = 1080;
 
   this.mountains = this.add.tileSprite(400, 210, imageBaseWidth, imageBaseHeight, 'mountains');
   this.mountains.setScale(0.5);
@@ -82,6 +76,22 @@ gameScene.create = function() {
   // this.pearl = this.add.sprite(400, 320, 'pearl');
   // this.pearl = this.physics.add.sprite(400, 320, 'pearl');
   // this.pearl.body.setAllowGravity(false);
+
+  const musicOffButton = this.add.sprite(700, 55, 'musicOff').setScale(0.3).setInteractive({ useHandCursor: true });
+  const musicButton = this.add.sprite(700, 55, 'music').setScale(0.3).setInteractive({ useHandCursor: true });
+  musicButton.visible = false;
+
+  musicOffButton.on('pointerdown', () => {
+    themeSound.mute = true;
+    musicOffButton.visible = false;
+    musicButton.visible = true;
+  });
+
+  musicButton.on('pointerdown', () => {
+    themeSound.mute = false;
+    musicButton.visible = false;
+    musicOffButton.visible = true;
+  });
 
   // create ground & scale to fit the width of the game
   platform = this.physics.add.staticGroup();
@@ -103,7 +113,7 @@ gameScene.create = function() {
       { key: 'run3' },
       { key: 'run4' },
       { key: 'run5' },
-      { key: 'run6' , duration: 20},
+      { key: 'run6', duration: 20 },
     ],
     frameRate: 7,
     // repeat: -1,
@@ -173,26 +183,34 @@ gameScene.create = function() {
     callbackScope: this,
     repeat: Infinity,
     delay: 1234,
-  })
+  });
 
   player.anims.play('run', true);
 };
 
-gameScene.collectPearl = function (player, pearls) {
-  pearls.disableBody(true, true);
+gameScene.toggleMute = function () {
+  if (!themeSound.mute) {
+    themeSound.mute = true;
+  } else {
+    themeSound.mute = false;
+  }
+};
+
+gameScene.collectPearl = function (player, pearl) {
+  pearl.disableBody(true, true);
   score += 50;
   scoreText.setText('Score: ' + score);
 };
 
-gameScene.collectCoins = function (player, coins) {
-  coins.disableBody(true, true);
+gameScene.collectCoins = function (player, coin) {
+  coin.disableBody(true, true);
   score += 5;
   scoreText.setText('Score: ' + score);
 };
 
 gameScene.generateCoins = function () {
-  this.coins.create(800, platform.children.entries[0].y-30, 'coin').setScale(0.3);
-}
+  this.coins.create(800, platform.children.entries[0].y - 30, 'coin').setScale(0.3);
+};
 
 gameScene.generateStone3 = function () {
   this.stones.create(800, platform.children.entries[0].y - 30, 'stone3');
@@ -203,16 +221,16 @@ gameScene.makePearl = function () {
     this.pearl.destroy();
   }
 
-  var pearlX = Phaser.Math.Between(900, 10000);
-  var pearlY = Phaser.Math.Between(200, 400);
+  const pearlX = Phaser.Math.Between(900, 10000);
+  const pearlY = Phaser.Math.Between(200, 400);
   this.pearl = this.physics.add.sprite(pearlX, pearlY, 'pearl');
   this.pearl.body.setAllowGravity(false);
   // this.pearl.x -= 10;
 };
 
-gameScene.update = function() {
+gameScene.update = function () {
   // input cursor events
-  let onGround = player.body.blocked.down || player.body.touching.down;
+  const onGround = player.body.blocked.down || player.body.touching.down;
   cursors = this.input.keyboard.createCursorKeys();
   if (onGround) {
     player.anims.play('run', true);
@@ -249,27 +267,19 @@ gameScene.update = function() {
   }
 };
 
-gameScene.restartGame = function() {
-  player.anims.stop('run') || player.anims.stop('jump') || player.anims.stop('slide')
+gameScene.restartGame = function () {
+  player.anims.stop('run') || player.anims.stop('jump') || player.anims.stop('slide');
   themeSound.stop();
   finalScore = score;
   score = 0;
   this.scene.start(losingScene);
 };
 
-let welcomeScene = new Phaser.Scene('Welcome');
+const welcomeScene = new Phaser.Scene('Welcome');
 
-welcomeScene.create = function() {
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
-
-  let topBackgroundXOrigin = windowWidth / 2;
-  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
-  let topBackgroundHeight = (windowHeight / 5) * 3;
-
-  let imageBaseWidth = 1920;
-  let imageBaseHeight = 1080;
-  let heightRatio = topBackgroundHeight / imageBaseHeight;
+welcomeScene.create = function () {
+  const imageBaseWidth = 1920;
+  const imageBaseHeight = 1080;
 
   this.mountains = this.add.tileSprite(400, 210, imageBaseWidth, imageBaseHeight, 'mountains');
   this.mountains.setScale(0.5);
@@ -291,17 +301,9 @@ welcomeScene.create = function() {
 
 let rulesScene = new Phaser.Scene('Rules');
 
-rulesScene.create = function() {
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
-
-  let topBackgroundXOrigin = windowWidth / 2;
-  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
-  let topBackgroundHeight = (windowHeight / 5) * 3;
-
-  let imageBaseWidth = 1920;
-  let imageBaseHeight = 1080;
-  let heightRatio = topBackgroundHeight / imageBaseHeight;
+rulesScene.create = function () {
+  const imageBaseWidth = 1920;
+  const imageBaseHeight = 1080;
 
   this.mountains = this.add.tileSprite(400, 210, imageBaseWidth, imageBaseHeight, 'mountains');
   this.mountains.setScale(0.5);
@@ -319,18 +321,18 @@ rulesScene.create = function() {
   okButton.on('pointerdown', () => this.scene.start(welcomeScene));
 };
 
-let bootScene = new Phaser.Scene('Boot');
+const bootScene = new Phaser.Scene('Boot');
 
 bootScene.preload = function () {
   this.load.image('bar', bar);
   this.load.image('loading', loading);
-}
+};
 
 bootScene.create = function () {
   this.scene.start(loadingScene);
-}
+};
 
-let loadingScene = new Phaser.Scene('Loading');
+const loadingScene = new Phaser.Scene('Loading');
 
 loadingScene.preload = function () {
   this.add.image(400, 200, 'loading');
@@ -369,38 +371,32 @@ loadingScene.preload = function () {
   this.load.image('slide2', slide2);
   this.load.image('slide3', slide3);
   this.load.image('coin', coin);
+  this.load.image('musicOff', musicOff);
+  this.load.image('music', music);
 };
 
 loadingScene.create = function () {
   this.scene.start(welcomeScene);
 };
 
-let losingScene = new Phaser.Scene('Losing');
+const losingScene = new Phaser.Scene('Losing');
 
 losingScene.create = function () {
   lostSound = this.sound.add('lostGameAudio');
   lostSound.play();
 
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
-
-  let topBackgroundXOrigin = windowWidth / 2;
-  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
-  let topBackgroundHeight = (windowHeight / 5) * 3;
-
-  let imageBaseWidth = 1920;
-  let imageBaseHeight = 1080;
-  let heightRatio = topBackgroundHeight / imageBaseHeight;
+  const imageBaseWidth = 1920;
+  const imageBaseHeight = 1080;
 
   this.mountains = this.add.tileSprite(400, 210, imageBaseWidth, imageBaseHeight, 'mountains');
   this.mountains.setScale(0.5);
 
-    // create ground & scale to fit the width of the game
-    platform = this.physics.add.staticGroup();
+  // create ground & scale to fit the width of the game
+  platform = this.physics.add.staticGroup();
 
-    for (let i = 0; i < 6; i++) {
-      platform.create((i * 150), 490, 'wood').setScale(0.5).refreshBody();
-    }
+  for (let i = 0; i < 6; i++) {
+    platform.create((i * 150), 490, 'wood').setScale(0.5).refreshBody();
+  }
 
   this.add.image(400, 250, 'youLose').setScale(0.4);
   const playButton = this.add.sprite(400, 282, 'play').setScale(0.23).setInteractive({ useHandCursor: true });
@@ -426,4 +422,4 @@ const config = {
 };
 
 // Create a new Phaser game with the configurations mentioned above
-let game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
