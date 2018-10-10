@@ -59,10 +59,15 @@ let scoreText;
 let themeSound;
 let finalScore;
 let lostSound;
+let startTime;
+let currentTime;
+let elapsedSeconds;
 
 const gameScene = new Phaser.Scene('Game');
 
 gameScene.create = function () {
+  startTime = new Date();
+  console.log(startTime);
   themeSound = this.sound.add('runningAudio');
   themeSound.play({ loop: true });
 
@@ -188,14 +193,6 @@ gameScene.create = function () {
   player.anims.play('run', true);
 };
 
-gameScene.toggleMute = function () {
-  if (!themeSound.mute) {
-    themeSound.mute = true;
-  } else {
-    themeSound.mute = false;
-  }
-};
-
 gameScene.collectPearl = function (player, pearl) {
   pearl.disableBody(true, true);
   score += 50;
@@ -235,8 +232,34 @@ gameScene.update = function () {
   if (onGround) {
     player.anims.play('run', true);
   }
-  this.mountains.tilePositionX += 4;
-  this.pearl.x -= 10;
+
+  currentTime = new Date();
+  elapsedSeconds = currentTime.getTime() - startTime.getTime();
+  elapsedSeconds = Math.abs(elapsedSeconds / 1000);
+
+  if (elapsedSeconds <= 30) {
+    this.mountains.tilePositionX += 4;
+  } else if (elapsedSeconds > 30 && elapsedSeconds <= 60) {
+    this.mountains.tilePositionX += 4.1;
+  } else if (elapsedSeconds > 60 && elapsedSeconds <= 90) {
+    this.mountains.tilePositionX += 4.2;
+  } else if (elapsedSeconds > 90 && elapsedSeconds <= 120) {
+    this.mountains.tilePositionX += 4.3;
+  } else if (elapsedSeconds > 120) {
+    this.mountains.tilePositionX += 4.4;
+  }
+
+  if (elapsedSeconds <= 30) {
+    this.pearl.x -= 7;
+  } else if (elapsedSeconds > 30 && elapsedSeconds <= 60) {
+    this.pearl.x -= 7.1;
+  } else if (elapsedSeconds > 60 && elapsedSeconds <= 90) {
+    this.pearl.x -= 7.2;
+  } else if (elapsedSeconds > 90 && elapsedSeconds <= 120) {
+    this.pearl.x -= 7.3;
+  } else if (elapsedSeconds > 120) {
+    this.pearl.x -= 7.4;
+  }
 
   if ((cursors.up.isDown || cursors.space.isDown) && onGround) {
     player.body.setVelocityY(-400);
@@ -253,11 +276,31 @@ gameScene.update = function () {
   }
 
   this.stones.getChildren().forEach((stone) => {
-    stone.x -= 4;
+    if (elapsedSeconds <= 30) {
+      stone.x -= 4;
+    } else if (elapsedSeconds > 30 && elapsedSeconds <= 60) {
+      stone.x -= 4.1;
+    } else if (elapsedSeconds > 60 && elapsedSeconds <= 90) {
+      stone.x -= 4.2;
+    } else if (elapsedSeconds > 90 && elapsedSeconds <= 120) {
+      stone.x -= 4.3;
+    } else if (elapsedSeconds > 120) {
+      stone.x -= 4.4;
+    }
   });
 
   this.coins.getChildren().forEach((coin) => {
-    coin.x -= 4;
+    if (elapsedSeconds <= 30) {
+      coin.x -= 4;
+    } else if (elapsedSeconds > 30 && elapsedSeconds < 60) {
+      coin.x -= 4.1;
+    } else if (elapsedSeconds > 60 && elapsedSeconds < 90) {
+      coin.x -= 4.2;
+    } else if (elapsedSeconds > 90 && elapsedSeconds < 120) {
+      coin.x -= 4.3;
+    } else if (elapsedSeconds > 120) {
+      coin.x -= 4.4;
+    }
   });
 
   this.physics.add.overlap(player, this.pearl, this.collectPearl, null, this);
