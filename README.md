@@ -1,27 +1,25 @@
-# Phaser 3 Boilerplate
+# MMAK's Game Room: Island Runner
 
-🎮 A Minimal Boilerplate to your phaser 3 game with Parcel-bundler 📚
+An endless runner game. Avoid obstacles and get as many coins as you can! The longer you are in the game, the faster it gets!
 
-<div style="text-align:center"><img src ="https://i.imgur.com/b9aFxtD.jpg" /></div>
+This is a Phaser 3 game using the Phaser.io-v3-Boilerplate (https://github.com/22mahmoud/Phaser.io-v3-Boilerplate.git)
 
-## Features
+This game is a part of MMAK's game room which is a website that hosts edutainment games for young pre-teens. 
 
-* ES6
-* ESlint
-* Browsers are automatically updated as you change project files
+## Links
+MMAK's Game Room:
 
-## setup
+Website:
 
-```bash
->  git clone https://github.com/22mahmoud/Phaser.io-v3-Boilerplate.git
+GitHub: https://github.com/MMAK-Capstone/mmak
 
-> yarn
 
-> yarn start
-```
+Island-Runner:
 
-## Goals
+Website: https://island-runner-9bd31.firebaseapp.com/
 
-* [x] Boilerplate
-* [ ] CLI ( generates scenes and objects )
-* [ ] Game examples
+GitHub: https://github.com/MMAK-Capstone/island-runner
+
+MMAK's Game Room GitHub Organization:
+
+https://github.com/MMAK-Capstone
