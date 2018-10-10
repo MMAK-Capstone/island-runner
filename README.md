@@ -6,15 +6,20 @@ This is a Phaser 3 game using the Phaser.io-v3-Boilerplate (https://github.com/2
 
 This game is a part of MMAK's game room which is a website that hosts edutainment games for young pre-teens. 
 
-## LINKS
+## Links
 MMAK's Game Room:
+
 Website:
+
 GitHub: https://github.com/MMAK-Capstone/mmak
 
 
 Island-Runner:
+
 Website: https://island-runner-9bd31.firebaseapp.com/
+
 GitHub: https://github.com/MMAK-Capstone/island-runner
 
 MMAK's Game Room GitHub Organization:
+
 https://github.com/MMAK-Capstone
